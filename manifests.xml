@@ -15,15 +15,16 @@
    <project path="device/xiaomi/mt6768-common" name="xd_device_mt6768-common" remote="udyne" revision="thirteen"  />
   
    <!-- Kernel Trees-->
-   <project path="kernel/xiaomi/mt6768" name=/android_kernel_xiaomi_mt6768-legacy.git" remote="dev" clone-depth="1" revision="lineage-20" />
+   <project path="kernel/xiaomi/mt6768" name="android_kernel_xiaomi_mt6768-legacy.git" remote="dev" clone-depth="1" revision="lineage-20" />
         
    <!-- Vendor Tree -->
    <project path="vendor/xiaomi/mt6768-common" name="proprietary_vendor_xiaomi_mt6768-common.git" remote="hipex" clone-depth="1"  revision="13"  />
    <project path="vendor/xiaomi/lava" name="xd_vendor_xiaomi_lava" remote="udyne" revision="thirteen"  />
-  <!-- Hardware #Untracked
+  <!-- Hardware 
   <project path="hardware/mediatek" name="android_hardware_mediatek" remote="los" revision="lineage-20" />
-  <project path="hardware/xiaomi" name="hardware_xiaomi" remote="sup" revision="thirteen" /> -->
-  <!-- Other Tree -->
+  <project path="hardware/xiaomi" name="hardware_xiaomi" remote="sup" revision="thirteen" /> 
+  -->
+   <!-- Other Tree -->
  <project path="device/mediatek/sepolicy_vndr" name="android_device_mediatek_sepolicy_vndr" remote="los" revision="lineage-20" />
  <project path="packages/apps/ViPER4AndroidFX" name="packages_apps_ViPER4AndroidFX" remote="mk7x7" revision="v4a" />
 

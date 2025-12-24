@@ -9,7 +9,7 @@
 
 
    <!-- Device Trees -->
-   <project path="device/xiaomi/lava" name="xd_device_xiaomi_lava.git" remote="udyne" revision="thirteen"  />
+   <project path="device/xiaomi/lava" name="xd_device_xiaomi_lava.git" remote="ud" revision="thirteen"  />
 
    <!-- Common Device Tree -->
    <project path="device/xiaomi/mt6768-common" name="xd_device_mt6768-common" remote="ud" revision="thirteen"  />

@@ -53,7 +53,14 @@ git clone https://github.com/udyneos-prjkt/device_xiaomi_mt6768-common device/xi
 git clone https://github.com/udyneos-prjkt/proprietary_vendor_xiaomi_lancelot vendor/xiaomi/$DEV -b 15 --depth=1
 git clone https://github.com/udyneos-prjkt/proprietary_vendor_xiaomi_mt6768-common.git vendor/xiaomi/mt6768-common -b 15 --depth=1
 git clone https://github.com/udyneos-prjkt/android_kernel_xiaomi_mt6768.git kernel/xiaomi/mt6768 --depth=1 -b kernel-tree
+# hardware/xiaomi
+git clone https://github.com/LineageOS/android_hardware_xiaomi -b lineage-22.1 hardware/xiaomi
 
+# hardware/mediatek
+git clone https://github.com/LineageOS/android_hardware_mediatek -b lineage-22.1 hardware/mediatek
+
+# Sepolicy Tree
+git clone https://github.com/LineageOS/android_device_mediatek_sepolicy_vndr -b lineage-22.1 device/mediatek/sepolicy_vndr
 # Sync
 repo sync -c --force-sync --no-tags -j$JOBS || { tg "❌ Sync failed"; exit 1; }
 
@@ -112,7 +119,7 @@ Download: ${PD_URL}
 "
     
     # Upload images
-    for img in boot dtbo recovery super_empty; do
+    for img in boot dtbo recovery ; do
         [ -f "$OUT/${img}.img" ] && tg "🧩 ${img}.img: $(gf_upload "$OUT/${img}.img")"
     done
     

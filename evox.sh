@@ -4,7 +4,7 @@ set -o pipefail -o errtrace
 source .env 2>/dev/null || { echo "❌ .env not found"; exit 1; }
 
 # ========== CONFIG ==========
-ROM="EvolutionX-10.x"; DEV="lancelot"; TYPE="userdebug"; VER="BP1A"; MAIN="mnrdnn"
+ROM="EvolutionX-10.x"; DEV="lancelot"; TYPE="userdebug"; VER="bp1a"; MAIN="mnrdnn"
 OUT="out/target/product/${DEVICE:-$DEV}"; LOG="build.log"; START=$(date +%s)
 JOBS=$(nproc); export TZ="Asia/Jakarta"
 
@@ -47,6 +47,7 @@ rm -rf .repo/local_manifests prebuilts/clang/host/linux-x86 $OUT \
 echo -e "${Y}📦 Syncing repos...${N}"
 repo init -u https://github.com/Evolution-X/manifest -b vic --git-lfs
 
+echo -e "${Y}📦 Clone repo...${N}"
 # Clone trees
 git clone https://github.com/udyneos-prjkt/device_xiaomi_lancelot device/xiaomi/$DEV -b vic --depth=1
 git clone https://github.com/udyneos-prjkt/device_xiaomi_mt6768-common device/xiaomi/mt6768-common -b vic --depth=1
@@ -55,23 +56,26 @@ git clone https://github.com/udyneos-prjkt/proprietary_vendor_xiaomi_mt6768-comm
 git clone https://github.com/udyneos-prjkt/android_kernel_xiaomi_mt6768.git kernel/xiaomi/mt6768 --depth=1 -b kernel-tree
 # hardware/xiaomi
 git clone https://github.com/LineageOS/android_hardware_xiaomi -b lineage-22.1 hardware/xiaomi
-
 # hardware/mediatek
 git clone https://github.com/LineageOS/android_hardware_mediatek -b lineage-22.1 hardware/mediatek
-
 # Sepolicy Tree
 git clone https://github.com/LineageOS/android_device_mediatek_sepolicy_vndr -b lineage-22.1 device/mediatek/sepolicy_vndr
 # Sync
-repo sync -c --force-sync --no-tags -j$JOBS || { tg "❌ Sync failed"; exit 1; }
+
+if [ -f /opt/crave/resync.sh ]; then
+    /opt/crave/resync.sh
+else
+    repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j$(nproc --all)
+fi
+
 
 # Setup
 echo -e "${Y}⚙️ Setting up environment...${N}"
 . build/envsetup.sh
-export BUILD_USERNAME=$MAIN BUILD_HOSTNAME=crave
+export BUILD_USERNAME=$MAIN
+export BUILD_HOSTNAME=crave
 
 # Setup keys
-[ ! -d vendor/evolution-priv/keys ] && git clone https://github.com/Evolution-X/vendor_evolution-priv_keys-template vendor/evolution-priv/keys --depth=1
-cd vendor/evolution-priv/keys && . keys.sh 2>/dev/null; cd ../../../
 lunch lineage_${DEV}-${VER}-${TYPE}
 
 # Monitor

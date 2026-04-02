@@ -41,7 +41,8 @@ by: ${MAIN}
 echo -e "${Y}🧹 Cleaning...${N}"
 rm -rf .repo/local_manifests prebuilts/clang/host/linux-x86 $OUT \
        device/xiaomi/$DEV vendor/xiaomi/$DEV device/xiaomi/mt6768-common \
-       kernel/xiaomi/mt6768 vendor/xiaomi/mt6768-common
+       kernel/xiaomi/mt6768 vendor/xiaomi/mt6768-common \
+       device/mediatek/sepolicy_vndr hardware/mediatek hardware/xiaomi
 
 # Init & Sync
 echo -e "${Y}📦 Syncing repos...${N}"

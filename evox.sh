@@ -38,29 +38,32 @@ by: ${MAIN}
 🌏 $(date +'%d %b %Y %H:%M')"
 
 # Clean
+clean(){
 echo -e "${Y}🧹 Cleaning...${N}"
 rm -rf .repo/local_manifests prebuilts/clang/host/linux-x86 $OUT \
        device/xiaomi/$DEV vendor/xiaomi/$DEV device/xiaomi/mt6768-common \
        kernel/xiaomi/mt6768 vendor/xiaomi/mt6768-common \
        device/mediatek/sepolicy_vndr hardware/mediatek hardware/xiaomi
-
+}
 # Init & Sync
+repo_sync(){
 echo -e "${Y}📦 Syncing repos...${N}"
 repo init -u https://github.com/Evolution-X/manifest -b vic --git-lfs
-
+}
+clone(){
 echo -e "${Y}📦 Clone repo...${N}"
 # Clone trees
 git clone https://github.com/udyneos-prjkt/device_xiaomi_lancelot device/xiaomi/$DEV -b vic --depth=1
 git clone https://github.com/udyneos-prjkt/device_xiaomi_mt6768-common device/xiaomi/mt6768-common -b vic --depth=1
-git clone https://github.com/udyneos-prjkt/proprietary_vendor_xiaomi_lancelot vendor/xiaomi/$DEV -b 15 --depth=1
-git clone https://github.com/udyneos-prjkt/proprietary_vendor_xiaomi_mt6768-common.git vendor/xiaomi/mt6768-common -b 15 --depth=1
+git clone https://github.com/udyneos-prjkt/proprietary_vendor_xiaomi_lancelot vendor/xiaomi/$DEV -b vic --depth=1
+git clone https://github.com/udyneos-prjkt/proprietary_vendor_xiaomi_mt6768-common.git vendor/xiaomi/mt6768-common -b vic --depth=1
 git clone https://github.com/udyneos-prjkt/android_kernel_xiaomi_mt6768.git kernel/xiaomi/mt6768 --depth=1 -b kernel-tree
 # hardware/xiaomi
-git clone https://github.com/LineageOS/android_hardware_xiaomi -b lineage-22.1 hardware/xiaomi
+git clone https://github.com/LineageOS/android_hardware_xiaomi -b lineage-22.2 hardware/xiaomi
 # hardware/mediatek
-git clone https://github.com/LineageOS/android_hardware_mediatek -b lineage-22.1 hardware/mediatek
+git clone https://github.com/LineageOS/android_hardware_mediatek -b lineage-22.2 hardware/mediatek
 # Sepolicy Tree
-git clone https://github.com/LineageOS/android_device_mediatek_sepolicy_vndr -b lineage-22.1 device/mediatek/sepolicy_vndr
+git clone https://github.com/LineageOS/android_device_mediatek_sepolicy_vndr -b lineage-22.2 device/mediatek/sepolicy_vndr
 # Sync
 
 if [ -f /opt/crave/resync.sh ]; then
@@ -68,8 +71,9 @@ if [ -f /opt/crave/resync.sh ]; then
 else
     repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j$(nproc --all)
 fi
+}
 
-
+setup(){
 # Setup
 echo -e "${Y}⚙️ Setting up environment...${N}"
 . build/envsetup.sh
@@ -93,8 +97,9 @@ ${STATUS:0:100}
 Last update: $(date +'%H:%M')"
 done ) &
 MON_PID=$!
-
+}
 # Build
+build(){
 echo -e "${G}🔨 Building...${N}"
 m evolution -j$JOBS 2>&1 | tee "$LOG"
 if [ ${PIPESTATUS[0]} -ne 0 ]; then 
@@ -105,7 +110,12 @@ Build log: $(gf_upload "$LOG")"
     exit 1
 fi
 kill $MON_PID 2>/dev/null
-
+}
+clean
+repo_sync
+clone
+setup
+build
 # ========== UPLOAD ==========
 DUR=$(($(date +%s)-START))
 ZIP=$(ls -t $OUT/*.zip 2>/dev/null | head -1)
@@ -135,6 +145,4 @@ fi
 # Upload log
 LOG_SIZE=$(stat -c%s "$LOG" 2>/dev/null || stat -f%z "$LOG" 2>/dev/null)
 [ -f "$LOG" ] && [ "$LOG_SIZE" -le 52428800 ] && tg_doc "$LOG" "Build Log - ${DEV}"
-
-tg "🥀 Artifacts released!"
 echo -e "${G}✅ Done! Time: $((DUR/60)) minutes${N}"

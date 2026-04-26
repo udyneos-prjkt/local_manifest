@@ -4,7 +4,7 @@ set -o pipefail -o errtrace
 source .env 2>/dev/null || { echo "❌ .env not found"; exit 1; }
 
 # ========== CONFIG ==========
-ROM="EvolutionX-10.x"; DEV="lancelot"; TYPE="userdebug"; VER="bp1a"; MAIN="mnrdnn"
+ROM="EvolutionX-Vanilla-bka"; DEV="lancelot"; TYPE="userdebug"; VER="bp3a"; MAIN="mnrdnn"
 OUT="out/target/product/${DEVICE:-$DEV}"; LOG="build.log"; START=$(date +%s)
 JOBS=$(nproc); export TZ="Asia/Jakarta"
 
@@ -38,32 +38,31 @@ by: ${MAIN}
 🌏 $(date +'%d %b %Y %H:%M')"
 
 # Clean
-clean(){
 echo -e "${Y}🧹 Cleaning...${N}"
 rm -rf .repo/local_manifests prebuilts/clang/host/linux-x86 $OUT \
        device/xiaomi/$DEV vendor/xiaomi/$DEV device/xiaomi/mt6768-common \
-       kernel/xiaomi/mt6768 vendor/xiaomi/mt6768-common \
-       device/mediatek/sepolicy_vndr hardware/mediatek hardware/xiaomi
-}
+       kernel/xiaomi/mt6768 vendor/xiaomi/mt6768-common hardware/dolby
+
 # Init & Sync
-repo_sync(){
 echo -e "${Y}📦 Syncing repos...${N}"
-repo init -u https://github.com/Evolution-X/manifest -b vic --git-lfs
-}
-clone(){
+repo init -u https://github.com/Evolution-X/manifest -b bka --git-lfs
+
 echo -e "${Y}📦 Clone repo...${N}"
 # Clone trees
-git clone https://github.com/udyneos-prjkt/device_xiaomi_lancelot device/xiaomi/$DEV -b vic --depth=1
-git clone https://github.com/udyneos-prjkt/device_xiaomi_mt6768-common device/xiaomi/mt6768-common -b vic --depth=1
-git clone https://github.com/udyneos-prjkt/proprietary_vendor_xiaomi_lancelot vendor/xiaomi/$DEV -b vic --depth=1
-git clone https://github.com/udyneos-prjkt/proprietary_vendor_xiaomi_mt6768-common.git vendor/xiaomi/mt6768-common -b vic --depth=1
-git clone https://github.com/udyneos-prjkt/android_kernel_xiaomi_mt6768.git kernel/xiaomi/mt6768 --depth=1 -b kernel-tree
+git clone https://github.com/udyneos-prjkt/device_xiaomi_lancelot device/xiaomi/$DEV -b bka --depth=1
+git clone https://github.com/udyneos-prjkt/device_xiaomi_mt6768-common device/xiaomi/mt6768-common -b bka --depth=1
+git clone https://github.com/mk7x7/proprietary_vendor_xiaomi_lancelot vendor/xiaomi/$DEV -b 16.2 --depth=1
+git clone https://github.com/mk7x7/proprietary_vendor_xiaomi_mt6768-common.git vendor/xiaomi/mt6768-common -b 16.2 --depth=1
+git clone https://github.com/MrShockWAVEog/ximi-lancerlin-krenlol.git kernel/xiaomi/mt6768 --depth=1 -b shockwave
 # hardware/xiaomi
-git clone https://github.com/LineageOS/android_hardware_xiaomi -b lineage-22.2 hardware/xiaomi
+git clone https://github.com/udyneos-prjkt/android_hardware_xiaomi -b lineage-23.2 hardware/xiaomi
 # hardware/mediatek
-git clone https://github.com/LineageOS/android_hardware_mediatek -b lineage-22.2 hardware/mediatek
+git clone https://github.com/LineageOS/android_hardware_mediatek -b lineage-23.2 hardware/mediatek
 # Sepolicy Tree
-git clone https://github.com/LineageOS/android_device_mediatek_sepolicy_vndr -b lineage-22.2 device/mediatek/sepolicy_vndr
+git clone https://github.com/LineageOS/android_device_mediatek_sepolicy_vndr -b lineage-23.2 device/mediatek/sepolicy_vndr
+# Dolby
+git clone https://github.com/swiitch-OFF-Lab/hardware_dolby -b xiaomi-1.2 hardware/dolby
+
 # Sync
 
 if [ -f /opt/crave/resync.sh ]; then
@@ -71,14 +70,14 @@ if [ -f /opt/crave/resync.sh ]; then
 else
     repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j$(nproc --all)
 fi
-}
 
-setup(){
+
 # Setup
 echo -e "${Y}⚙️ Setting up environment...${N}"
 . build/envsetup.sh
 export BUILD_USERNAME=$MAIN
 export BUILD_HOSTNAME=crave
+export WITH_GMS=false
 
 # Setup keys
 lunch lineage_${DEV}-${VER}-${TYPE}
@@ -97,9 +96,8 @@ ${STATUS:0:100}
 Last update: $(date +'%H:%M')"
 done ) &
 MON_PID=$!
-}
+
 # Build
-build(){
 echo -e "${G}🔨 Building...${N}"
 m evolution -j$JOBS 2>&1 | tee "$LOG"
 if [ ${PIPESTATUS[0]} -ne 0 ]; then 
@@ -110,12 +108,7 @@ Build log: $(gf_upload "$LOG")"
     exit 1
 fi
 kill $MON_PID 2>/dev/null
-}
-clean
-repo_sync
-clone
-setup
-build
+
 # ========== UPLOAD ==========
 DUR=$(($(date +%s)-START))
 ZIP=$(ls -t $OUT/*.zip 2>/dev/null | head -1)
@@ -137,12 +130,8 @@ Download: ${PD_URL}
     for img in boot dtbo recovery ; do
         [ -f "$OUT/${img}.img" ] && tg "🧩 ${img}.img: $(gf_upload "$OUT/${img}.img")"
     done
-    
-    # Upload OTA
-    [ -f "$OUT/${DEV}.json" ] && tg "📑 OTA: $(pd_upload "$OUT/${DEV}.json")"
 fi
 
 # Upload log
 LOG_SIZE=$(stat -c%s "$LOG" 2>/dev/null || stat -f%z "$LOG" 2>/dev/null)
 [ -f "$LOG" ] && [ "$LOG_SIZE" -le 52428800 ] && tg_doc "$LOG" "Build Log - ${DEV}"
-echo -e "${G}✅ Done! Time: $((DUR/60)) minutes${N}"

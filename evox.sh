@@ -55,7 +55,7 @@ git clone https://github.com/mk7x7/proprietary_vendor_xiaomi_lancelot vendor/xia
 git clone https://github.com/mk7x7/proprietary_vendor_xiaomi_mt6768-common.git vendor/xiaomi/mt6768-common -b 16.2 --depth=1
 git clone https://github.com/MrShockWAVEog/ximi-lancerlin-krenlol.git kernel/xiaomi/mt6768 --depth=1 -b shockwave
 # hardware/xiaomi
-git clone https://github.com/udyneos-prjkt/android_hardware_xiaomi -b lineage-23.2 hardware/xiaomi
+git clone https://github.com/crdroidandroid/android_hardware_xiaomi.git -b 16.0 hardware/xiaomi
 # hardware/mediatek
 git clone https://github.com/LineageOS/android_hardware_mediatek -b lineage-23.2 hardware/mediatek
 # Sepolicy Tree

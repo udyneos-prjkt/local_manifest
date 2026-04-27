@@ -41,11 +41,17 @@ by: ${MAIN}
 echo -e "${Y}🧹 Cleaning...${N}"
 rm -rf .repo/local_manifests prebuilts/clang/host/linux-x86 $OUT \
        device/xiaomi/$DEV vendor/xiaomi/$DEV device/xiaomi/mt6768-common \
-       kernel/xiaomi/mt6768 vendor/xiaomi/mt6768-common hardware/dolby
+       kernel/xiaomi/mt6768 vendor/xiaomi/mt6768-common hardware/dolby \
+       hardware/xiaomi device/mediatek/sepolicy_vndr hardware/mediatek
 
 # Init & Sync
 echo -e "${Y}📦 Syncing repos...${N}"
 repo init -u https://github.com/Evolution-X/manifest -b bq2 --git-lfs
+if [ -f /opt/crave/resync.sh ]; then
+    /opt/crave/resync.sh
+else
+    repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j$(nproc --all)
+fi
 
 echo -e "${Y}📦 Clone repo...${N}"
 # Clone trees
@@ -62,15 +68,6 @@ git clone https://github.com/LineageOS/android_hardware_mediatek -b lineage-23.2
 git clone https://github.com/LineageOS/android_device_mediatek_sepolicy_vndr -b lineage-23.2 device/mediatek/sepolicy_vndr
 # Dolby
 git clone https://github.com/swiitch-OFF-Lab/hardware_dolby -b xiaomi-1.2 hardware/dolby
-
-# Sync
-
-if [ -f /opt/crave/resync.sh ]; then
-    /opt/crave/resync.sh
-else
-    repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j$(nproc --all)
-fi
-
 
 # Setup
 echo -e "${Y}⚙️ Setting up environment...${N}"

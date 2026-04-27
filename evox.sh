@@ -45,7 +45,7 @@ rm -rf .repo/local_manifests prebuilts/clang/host/linux-x86 $OUT \
 
 # Init & Sync
 echo -e "${Y}📦 Syncing repos...${N}"
-repo init -u https://github.com/Evolution-X/manifest -b bka --git-lfs
+repo init -u https://github.com/Evolution-X/manifest -b bq2 --git-lfs
 
 echo -e "${Y}📦 Clone repo...${N}"
 # Clone trees
@@ -80,7 +80,7 @@ export BUILD_HOSTNAME=crave
 export WITH_GMS=false
 
 # Setup keys
-lunch lineage_lancelot-ap3a-userdebug
+lunch lineage_lancelot-bp4a-userdebug
 
 # Monitor
 MSG=$(curl -s -X POST "https://api.telegram.org/bot${TT}/sendMessage" -d "chat_id=${CI}" -d "text=⚙️ Compiling..." -d "parse_mode=HTML")

@@ -4,8 +4,8 @@ set -o pipefail -o errtrace
 source .env 2>/dev/null || { echo "❌ .env not found"; exit 1; }
 
 # ========== CONFIG ==========
-ROM="EvolutionX-Vanilla-bka"; DEV="lancelot"; TYPE="userdebug"; VER="bp3a"; MAIN="mnrdnn"
-OUT="out/target/product/${DEVICE:-$DEV}"; LOG="build.log"; START=$(date +%s)
+ROM="EvolutionX-Vanilla-bq2"; DEV="lancelot"; TYPE="userdebug"; VER="bp3a"; MAIN="mnrdnn"
+OUT="out/target/product/${DEVICE:-$DEV}"; LOG="out/build.log"; START=$(date +%s)
 JOBS=$(nproc); export TZ="Asia/Jakarta"
 
 # ========== COLORS ==========

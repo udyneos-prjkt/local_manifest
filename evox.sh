@@ -80,7 +80,7 @@ export BUILD_HOSTNAME=crave
 export WITH_GMS=false
 
 # Setup keys
-lunch lineage_${DEV}-${VER}-${TYPE}
+lunch lineage_lancelot-bp3a-userdebug
 
 # Monitor
 MSG=$(curl -s -X POST "https://api.telegram.org/bot${TT}/sendMessage" -d "chat_id=${CI}" -d "text=⚙️ Compiling..." -d "parse_mode=HTML")

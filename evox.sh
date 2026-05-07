@@ -4,7 +4,7 @@ set -o pipefail -o errtrace
 source .env 2>/dev/null || { echo "❌ .env not found"; exit 1; }
 
 # ========== CONFIG ==========
-ROM="EvolutionX-Vanilla-bq2"; DEV="lancelot"; TYPE="userdebug"; VER="bp3a"; MAIN="mnrdnn"
+ROM="EvolutionX-Vanilla-bq2"; DEV="lancelot"; TYPE="userdebug"; VER="bp4a"; MAIN="mnrdnn"
 OUT="out/target/product/${DEVICE:-$DEV}"; LOG="out/build.log"; START=$(date +%s)
 JOBS=$(nproc); export TZ="Asia/Jakarta"
 
@@ -41,7 +41,7 @@ by: ${MAIN}
 echo -e "${Y}🧹 Cleaning...${N}"
 rm -rf .repo/local_manifests prebuilts/clang/host/linux-x86 $OUT \
        device/xiaomi/$DEV vendor/xiaomi/$DEV device/xiaomi/mt6768-common \
-       kernel/xiaomi/mt6768 vendor/xiaomi/mt6768-common hardware/dolby \
+       kernel/xiaomi/mt6768 vendor/xiaomi/mt6768-common \
        hardware/xiaomi device/mediatek/sepolicy_vndr hardware/mediatek
 
 # Init & Sync
@@ -66,8 +66,6 @@ git clone https://github.com/crdroidandroid/android_hardware_xiaomi.git -b 16.0 
 git clone https://github.com/LineageOS/android_hardware_mediatek -b lineage-23.2 hardware/mediatek
 # Sepolicy Tree
 git clone https://github.com/LineageOS/android_device_mediatek_sepolicy_vndr -b lineage-23.2 device/mediatek/sepolicy_vndr
-# Dolby
-git clone https://github.com/swiitch-OFF-Lab/hardware_dolby -b xiaomi-1.2 hardware/dolby
 
 # Setup
 echo -e "${Y}⚙️ Setting up environment...${N}"

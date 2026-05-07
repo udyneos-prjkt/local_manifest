@@ -99,9 +99,9 @@ echo -e "${G}🔨 Building...${N}"
 m evolution -j$JOBS 2>&1 | tee "$LOG"
 if [ ${PIPESTATUS[0]} -ne 0 ]; then 
     kill $MON_PID 2>/dev/null
-    tg "Build failed!
-Device: ${DEV}
-Build log: $(gf_upload "$LOG")"
+    LOG_SIZE=$(stat -c%s "$LOG" 2>/dev/null || stat -f%z "$LOG" 2>/dev/null)
+    [ -f "$LOG" ] && [ "$LOG_SIZE" -le 52428800 ] && tg_doc "$LOG" "Build Log - ${DEV}"
+
     exit 1
 fi
 kill $MON_PID 2>/dev/null

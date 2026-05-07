@@ -41,7 +41,7 @@ by: ${MAIN}
 echo -e "${Y}🧹 Cleaning...${N}"
 rm -rf .repo/local_manifests prebuilts/clang/host/linux-x86 $OUT \
        device/xiaomi/$DEV vendor/xiaomi/$DEV device/xiaomi/mt6768-common \
-       kernel/xiaomi/mt6768 vendor/xiaomi/mt6768-common \
+       kernel/xiaomi/mt6768 vendor/xiaomi/mt6768-common vendor/mediatek/ims \
        hardware/xiaomi device/mediatek/sepolicy_vndr hardware/mediatek
 
 # Init & Sync
@@ -66,6 +66,8 @@ git clone https://github.com/crdroidandroid/android_hardware_xiaomi.git -b 16.0 
 git clone https://github.com/LineageOS/android_hardware_mediatek -b lineage-23.2 hardware/mediatek
 # Sepolicy Tree
 git clone https://github.com/LineageOS/android_device_mediatek_sepolicy_vndr -b lineage-23.2 device/mediatek/sepolicy_vndr
+# Ims
+git clone https://github.com/techyminati/android_vendor_mediatek_ims vendor/mediatek/ims
 
 # Setup
 echo -e "${Y}⚙️ Setting up environment...${N}"
